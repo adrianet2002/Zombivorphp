@@ -11,13 +11,21 @@ try {
             $nick = $_POST['nick'];
             $passwd = $_POST['passwd'];
 
-            $sql = "SELECT * FROM `users` WHERE nick='" . $nick . "' and passwd='" . $passwd . "';";
+            $sql = "SELECT id, nick FROM `users` WHERE nick='" . $nick . "' and passwd='" . $passwd . "';";
             $resultado = $conn->query($sql);
 
             if ($resultado->num_rows > 0) {
+              
+                $usuario = $resultado->fetch_assoc(); // Obtenemos el resultado como array asociativo
+                session_start(); // Inicia la sesión en PHP
+                $_SESSION['user_id'] = $usuario['id']; 
+              
                 echo json_encode([
                     "codigo" => 200,
-                    "mensaje" => "Inicio de sesión correcto"
+                    "mensaje" => "Inicio de sesión correcto",
+                    "id" => $usuario['id'], // Enviamos el ID como parte de la respuesta
+                    "nick" => $usuario['nick']
+                   
                 ]);
             } else {
                 echo json_encode([
